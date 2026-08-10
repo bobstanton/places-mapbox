@@ -1,0 +1,122 @@
+/* Marker and waypoint styles come from the places-shared public CSS exports. */
+
+/* Stack popups above markers (focus/linked markers use z-index: 100). */
+.mapbox-map .mapboxgl-popup {
+  z-index: 10000;
+}
+
+.mapbox-map .mapboxgl-popup-content {
+  padding: var(--size-4-3) var(--size-4-2);
+  border-radius: var(--radius-s);
+  background: var(--background-primary);
+  box-shadow: var(--shadow-s);
+}
+
+.mapbox-map .mapboxgl-popup-content .internal-link {
+  color: var(--link-color);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+}
+
+.mapbox-map .mapboxgl-popup-content .internal-link:hover {
+  color: var(--link-color-hover);
+  text-decoration: underline;
+}
+
+.places-overlay-alignment-buttons {
+  position: absolute;
+  top: var(--size-2-2);
+  inset-inline-end: calc(var(--size-2-2) + 30px + var(--size-2-1)); /* 30px = edit button width */
+  display: flex;
+  gap: var(--size-2-1);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 1000;
+}
+
+.places-overlay-alignment-container:hover .places-overlay-alignment-buttons {
+  opacity: 1;
+}
+
+.places-overlay-alignment-buttons .places-floating-button {
+  padding: var(--size-2-2) var(--size-2-3); /* Match edit button padding */
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-s);
+  cursor: var(--cursor);
+  color: var(--text-muted);
+  box-shadow: none;
+  transition: background-color 0.25s ease;
+  box-sizing: border-box;
+}
+
+.places-overlay-alignment-buttons .places-floating-button svg {
+  width: var(--icon-s);
+  height: var(--icon-s);
+}
+
+.places-overlay-alignment-buttons .places-floating-button:hover {
+  background: var(--background-modifier-hover);
+}
+
+.mapboxgl-popup {
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+.places-popup .mapboxgl-popup-content {
+  touch-action: manipulation;
+}
+
+.places-popup.mapboxgl-popup .mapboxgl-popup-content {
+  padding: 12px 10px;
+  border-radius: 12px;
+  background: var(--background-primary);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+}
+
+.places-popup.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-top-color: var(--background-primary);
+}
+
+.places-popup.mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+  border-bottom-color: var(--background-primary);
+}
+
+.places-popup.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  border-right-color: var(--background-primary);
+}
+
+.places-popup.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  border-left-color: var(--background-primary);
+}
+
+.places-popup.mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip,
+.places-popup.mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip,
+.places-popup.mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip,
+.places-popup.mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip {
+  display: none;
+}
+
+.places-popup .mapboxgl-popup-close-button {
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.places-popup .mapboxgl-popup-close-button:hover {
+  color: var(--text-normal);
+  background: none;
+  box-shadow: none;
+}
+
+.mapboxgl-popup-close-button {
+  touch-action: manipulation;
+}

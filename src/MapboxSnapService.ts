@@ -5,6 +5,7 @@ import { IPlaceExtensionSettings } from "places-shared/settings";
 import { ISnapService, SnapRequest, SnapResult, SnappedPoint, executeRateLimited, formatProviderApiError, formatProviderResponseShapeError, mapTravelMode, toSnappedPoint, describeUnsupportedSnapOptions, shouldSendTimestamps, toMatchedGeometry } from "places-shared/services";
 
 const MAPBOX_MATCHING_PROFILES = { walk: "walking", bike: "cycling", drive: "driving" } as const;
+
 import { mapboxRateLimits } from "./MapboxRateLimits";
 
 interface MapboxTracepoint {
@@ -30,6 +31,7 @@ export class MapboxSnapService implements ISnapService {
     for (let i = 0; i < request.points.length; i += batchSize) {
       const batch = request.points.slice(i, i + batchSize);
       const result = await this.snapBatch(batch, request);
+
       snapped.push(...result.points);
       // Batches are consecutive stretches of one track, and their matched
       // geometries concatenate into a single path.
@@ -47,14 +49,17 @@ export class MapboxSnapService implements ISnapService {
       overview: "false",
       steps: "false",
     });
+
     if (request.radiusMeters !== undefined) {
       params.set("radiuses", batch.map(() => String(request.radiusMeters)).join(";"));
     }
+
     // Unix seconds, one per coordinate. Elapsed time between fixes is what
     // stops the matcher jumping to a parallel way it could not have reached.
     if (shouldSendTimestamps(request) && batch.every((point) => point.time)) {
       params.set("timestamps", batch.map((point) => String(Math.round((point.time as Date).getTime() / 1000))).join(";"));
     }
+
     if (request.tidy) params.set("tidy", "true");
     if (request.exclude?.length) params.set("exclude", request.exclude.join(","));
 
@@ -77,6 +82,7 @@ export class MapboxSnapService implements ISnapService {
     // Map Matching answers a refused match with HTTP 200 and a non-Ok `code`
     // plus a `message`.
     const tracepoints = (response.json as { tracepoints?: Array<MapboxTracepoint | null> } | undefined)?.tracepoints;
+
     if (!Array.isArray(tracepoints) || tracepoints.length !== batch.length) {
       throw new Error(formatProviderResponseShapeError({
         provider: "Mapbox",
@@ -91,6 +97,7 @@ export class MapboxSnapService implements ISnapService {
     }
 
     const matchings = (response.json as { matchings?: Array<{ geometry?: { coordinates?: unknown } }> }).matchings;
+
     return {
       points: tracepoints.map((tracepoint, index) => toSnappedPoint(tracepoint?.location, batch[index])),
       geometry: toMatchedGeometry(matchings?.[0]?.geometry?.coordinates),

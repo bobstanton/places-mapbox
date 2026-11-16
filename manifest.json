@@ -1,9 +1,9 @@
 {
 	"id": "places-mapbox",
 	"name": "Places - Mapbox",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"minAppVersion": "1.13.0",
-	"description": "Map provider for Places using Mapbox, with vector maps, POI search, elevation replacement, directions, isochrones, and track snapping.",
+	"description": "Map provider for Places using Mapbox, with vector maps, POI search, elevation replacement, 3D terrain, directions, isochrones, and track snapping.",
 	"author": "Bob Stanton",
 	"authorUrl": "https://github.com/bobstanton",
 	"fundingUrl": "https://ko-fi.com/bobsoftware",

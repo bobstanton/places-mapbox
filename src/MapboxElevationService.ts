@@ -22,7 +22,6 @@ export class MapboxElevationService extends ElevationServiceBase {
     super(extensionSettings);
   }
 
-
   protected async getElevationForPoints(coordinates: Coordinate[]): Promise<Meters[]> {
     if (coordinates.length === 0) {
       return [];
@@ -35,6 +34,7 @@ export class MapboxElevationService extends ElevationServiceBase {
       const tileEntries = await Promise.all(
         Array.from(tileGroups.keys(), async (tileKey): Promise<[string, ImageData]> => {
           const [z, x, y] = tileKey.split(',').map(Number);
+
           return [tileKey, await this.downloadTerrainTile(z, x, y)];
         })
       );
@@ -44,6 +44,7 @@ export class MapboxElevationService extends ElevationServiceBase {
 
       for (const [tileKey, pointsInTile] of tileGroups) {
         const tileData = tileDataMap.get(tileKey);
+
         if (!tileData) {
           continue;
         }
@@ -52,15 +53,16 @@ export class MapboxElevationService extends ElevationServiceBase {
 
         for (const point of pointsInTile) {
           const elevation = this.extractElevationFromTile(tileData, point.lat, point.lng, z, x, y);
+
           elevations[point.originalIndex] = meters(elevation);
         }
       }
 
       return elevations;
-
     } catch (error) {
       if (!(error instanceof TerrainTileDecodeError)) throw error;
       logger.scope('Places').error("Mapbox terrain-DEM elevation error, falling back to Tilequery:", error);
+
       return this.getElevationForPointsFallback(coordinates);
     }
   }
@@ -71,6 +73,7 @@ export class MapboxElevationService extends ElevationServiceBase {
     for (const { latitude: lat, longitude: lng } of coordinates) {
       await this.tilequeryFallbackLimiter.wait();
       const elevation = await this.getElevationFromTilequery(lat, lng);
+
       elevations.push(meters(elevation));
     }
 
@@ -87,6 +90,7 @@ export class MapboxElevationService extends ElevationServiceBase {
     }
 
     const blob = new Blob([response.arrayBuffer], { type: 'image/png' });
+
     try {
       return await this.blobToImageData(blob);
     } catch (error) {
@@ -97,19 +101,26 @@ export class MapboxElevationService extends ElevationServiceBase {
   private async blobToImageData(blob: Blob): Promise<ImageData> {
     return new Promise((resolve, reject) => {
       const img = new Image();
+
       img.onload = () => {
         const canvas = createEl('canvas');
+
         canvas.width = img.width;
         canvas.height = img.height;
         const ctx = canvas.getContext('2d');
+
         if (!ctx) {
           reject(new Error('Failed to get canvas context'));
+
           return;
         }
+
         ctx.drawImage(img, 0, 0);
         const imageData = ctx.getImageData(0, 0, img.width, img.height);
+
         resolve(imageData);
       };
+
       img.onerror = reject;
       img.src = URL.createObjectURL(blob);
     });
@@ -169,6 +180,7 @@ export class MapboxElevationService extends ElevationServiceBase {
     const latRad = lat * DEG_TO_RAD;
     const x = Math.floor(((lng + 180) / 360) * n);
     const y = Math.floor(((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n);
+
     return { x, y };
   }
 
@@ -188,6 +200,7 @@ export class MapboxElevationService extends ElevationServiceBase {
           .map((feature: unknown) => {
             if (typeof feature !== 'object' || feature === null || !('properties' in feature)) return undefined;
             const properties: unknown = feature.properties;
+
             return typeof properties === 'object' && properties !== null && 'ele' in properties
               ? properties.ele
               : undefined;
@@ -198,7 +211,6 @@ export class MapboxElevationService extends ElevationServiceBase {
     // Terrain v2 has no contour features at or below sea level.
     return contourElevations.length > 0 ? Math.max(...contourElevations) : 0;
   }
-
 
   getProviderName(): string {
     return "mapbox";

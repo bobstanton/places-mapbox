@@ -1,7 +1,8 @@
 # Places - Mapbox
 
-Map provider for [Places](https://community.obsidian.md/plugins/places) using [Mapbox](https://www.mapbox.com/), with vector maps, POI search, elevation replacement, directions, isochrones, and track snapping.
+Map provider for [Places](https://community.obsidian.md/plugins/places) using [Mapbox](https://www.mapbox.com/), with vector maps, POI search, elevation replacement, 3D terrain, directions, isochrones, and track snapping.
 
+This is not a stand-alone plugin, to use, install along side [Places](https://community.obsidian.md/plugins/places). Refer to the [sandbox](https://sandbox.obsidian.stanton.dev/places/) for examples.
 
 ## Network requests
 
@@ -21,9 +22,9 @@ None.
 
 ## Dependencies
 
-| Library                                                                    | Purpose                                                      |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| [mapbox-gl](https://github.com/mapbox/mapbox-gl-js)                        | Renders the map surface                                      |
-| [@mapbox/search-js-core](https://github.com/mapbox/search-js)              | POI and address search                                       |
-| [places-shared](https://github.com/bobstanton/places-shared)               | Shared map, overlay, routing, and utility code               |
-| [places-maplibre-base](https://github.com/bobstanton/places-maplibre-base) | Shared GL map implementation that mapbox-gl is injected into |
+| Library                                                                                          | Purpose                                        |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| [mapbox-gl](https://github.com/mapbox/mapbox-gl-js)                                              | Renders the map surface                        |
+| [@mapbox/search-js-core](https://github.com/mapbox/search-js)                                    | POI and address search                         |
+| [places-shared](https://github.com/bobstanton/places-shared)                                     | Shared map, overlay, routing, and utility code |
+| [places-shared/obsidian/maplibre](https://github.com/bobstanton/places-shared/obsidian/maplibre) | Shared map rendering                           |

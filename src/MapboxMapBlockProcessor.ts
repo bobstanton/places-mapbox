@@ -1,7 +1,7 @@
 import { App } from "obsidian";
 import { type UnitsSystem } from "places-shared/units";
 import { IPlaceExtensionSettings } from "places-shared/settings";
-import { MapLibreProviderBase, setGlRuntime, type MapGlRuntime } from "places-maplibre-base";
+import { MapLibreProviderBase, setGlRuntime, type MapGlRuntime } from "places-shared/obsidian/maplibre";
 import mapboxgl from "mapbox-gl";
 import { getMapboxStyleUrl, MAPBOX_STYLES } from "./MapboxStyles";
 
@@ -24,13 +24,16 @@ export class MapboxMapBlockProcessor extends MapLibreProviderBase {
 
   protected override constructMap(options: ConstructorParameters<MapGlRuntime['Map']>[0]): InstanceType<MapGlRuntime['Map']> {
     mapboxgl.accessToken = this.extensionSettings.apiKey ?? "";
+
     return new mapboxgl.Map(options as unknown as mapboxgl.MapOptions) as unknown as InstanceType<MapGlRuntime['Map']>;
   }
 
 protected getStyleUrl(style: string): string | undefined {
     const styleKey = style;
+
     // Custom studio styles and full URLs pass through untouched.
     if (styleKey.startsWith('mapbox://') || styleKey.startsWith('https://')) return styleKey;
+
     return getMapboxStyleUrl(styleKey);
   }
 
@@ -45,5 +48,4 @@ protected getStyleUrl(style: string): string | undefined {
   protected override getProviderIntegration(): string {
     return 'mapbox-gl';
   }
-
 }

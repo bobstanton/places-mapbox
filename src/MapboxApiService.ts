@@ -12,6 +12,7 @@ let sharedSessionToken: SessionToken | undefined;
 
 function getObsidianSessionToken(): SessionToken {
   sharedSessionToken ??= new SessionToken();
+
   return sharedSessionToken;
 }
 
@@ -31,6 +32,7 @@ export default class MapboxApiService implements IPlacesService {
       search: (searchText, proximity) => this.executeSearch(searchText, proximity ? [proximity.longitude, proximity.latitude] : undefined),
       geocodeLocation: async (location) => {
         const bounds = await this.geocodeLocationBounds(location);
+
         return bounds ? { bounds } : null;
       },
       searchInBounds: (searchText, bounds) => this.lookupPlaceInBounds(searchText, bounds),
@@ -48,7 +50,7 @@ export default class MapboxApiService implements IPlacesService {
         bbox: [number, number, number, number];
       } = {
         sessionToken: this.sessionToken,
-        types: "place,poi",
+        types: "place,poi,address",
         bbox: [bounds.minLng, bounds.minLat, bounds.maxLng, bounds.maxLat]
       };
 
@@ -67,6 +69,7 @@ export default class MapboxApiService implements IPlacesService {
       return places;
     } catch (error) {
       logger.scope('Places').error('Mapbox bounded search failed', error);
+
       throw error;
     }
   }
@@ -92,8 +95,10 @@ export default class MapboxApiService implements IPlacesService {
 
     const feature = retrieveResults.features[0];
     const bbox = (feature as { bbox?: number[] }).bbox;
+
     if (Array.isArray(bbox) && bbox.length >= 4) {
       const [minLng, minLat, maxLng, maxLat] = bbox;
+
       return new PlacesBoundingBox(minLat, minLng, maxLat, maxLng);
     }
 
@@ -111,7 +116,7 @@ export default class MapboxApiService implements IPlacesService {
       proximity?: [number, number];
     } = {
       sessionToken: this.sessionToken,
-      types: "place,poi"
+      types: "place,poi,address"
     };
 
     if (this.extensionSettings.country) {
@@ -132,6 +137,7 @@ export default class MapboxApiService implements IPlacesService {
       return places;
     } catch (error) {
       logger.scope('Places').error('Mapbox search failed', error);
+
       throw error;
     }
   }
@@ -173,6 +179,7 @@ export default class MapboxApiService implements IPlacesService {
     };
 
     removeRedundantPlaceAddressParts(place);
+
     return place;
   }
 
@@ -183,10 +190,9 @@ export default class MapboxApiService implements IPlacesService {
         types: string;
       } = {
         sessionToken: this.sessionToken,
-        types: "place,poi"
+        types: "place,poi,address"
       };
       
-      // Mapbox SDK expects [longitude, latitude]
       const reverseResult = await this.searchBoxCore.reverse(
         [coordinate.longitude, coordinate.latitude],
         reverseOptions
@@ -210,8 +216,8 @@ export default class MapboxApiService implements IPlacesService {
       return places;
     } catch (error) {
       logger.scope('Places').error('Mapbox reverse geocoding failed', error);
+
       throw error;
     }
   }
-
 }

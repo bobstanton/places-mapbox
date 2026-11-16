@@ -1,6 +1,4 @@
-/* Marker and waypoint styles come from the places-shared public CSS exports. */
 
-/* Stack popups above markers (focus/linked markers use z-index: 100). */
 .mapbox-map .mapboxgl-popup {
   z-index: 10000;
 }
@@ -12,13 +10,15 @@
   box-shadow: var(--shadow-s);
 }
 
-.mapbox-map .mapboxgl-popup-content .internal-link {
+.mapbox-map .mapboxgl-popup-content .internal-link,
+.mapbox-map .mapboxgl-popup-content .external-link {
   color: var(--link-color);
   text-decoration: none;
   font-weight: var(--font-weight-medium);
 }
 
-.mapbox-map .mapboxgl-popup-content .internal-link:hover {
+.mapbox-map .mapboxgl-popup-content .internal-link:hover,
+.mapbox-map .mapboxgl-popup-content .external-link:hover {
   color: var(--link-color-hover);
   text-decoration: underline;
 }
@@ -26,7 +26,7 @@
 .places-overlay-alignment-buttons {
   position: absolute;
   top: var(--size-2-2);
-  inset-inline-end: calc(var(--size-2-2) + 30px + var(--size-2-1)); /* 30px = edit button width */
+  inset-inline-end: calc(var(--size-2-2) + 30px + var(--size-2-1));  
   display: flex;
   gap: var(--size-2-1);
   opacity: 0;
@@ -39,7 +39,7 @@
 }
 
 .places-overlay-alignment-buttons .places-floating-button {
-  padding: var(--size-2-2) var(--size-2-3); /* Match edit button padding */
+  padding: var(--size-2-2) var(--size-2-3);  
   position: static;
   display: flex;
   align-items: center;

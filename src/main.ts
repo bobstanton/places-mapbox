@@ -1,8 +1,8 @@
 import { App, Plugin } from "obsidian";
 import { IPlaceExtensionSettings, IPlacesExtensionHostSettings } from "places-shared/settings";
-import { IPlacePluginExtension, IPlacePluginExtensionExports, registerPlaceExtensionLifecycle, settingsOnlyExports, PLACES_EXTENSION_API_VERSION, type ExtensionSettingsGroup } from "places-shared/services";
-import { Utilities , configureRequestLogging } from "places-shared/utils";
-import { apiKeySettingItem, countrySettingItem, styleDropdownItem } from "places-shared/ui";
+import { IPlacePluginExtension, IPlacePluginExtensionExports, registerPlaceExtensionLifecycle, settingsOnlyExports, PLACES_EXTENSION_API_VERSION, type ExtensionSettingsGroup } from "places-shared/obsidian/services";
+import { Utilities, configureRequestLogging } from "places-shared/utils";
+import { apiKeySettingItem, countrySettingItem, settingsPageStatus, styleDropdownItem } from "places-shared/obsidian/ui";
 import "./styles.css";
 import MapboxApiService from "./MapboxApiService";
 import { MapboxMapBlockProcessor } from "./MapboxMapBlockProcessor";
@@ -10,11 +10,11 @@ import { MapboxElevationService } from "./MapboxElevationService";
 import { MapboxRouteOverlayService } from "./MapboxRouteOverlayService";
 import { MapboxSnapService } from "./MapboxSnapService";
 import { MapboxTerrainDemProvider } from "./MapboxTerrainDemProvider";
-import { buildImageAlignment } from "places-maplibre-base";
+import { buildImageAlignment } from "places-shared/obsidian/maplibre";
 import { MAPBOX_STYLES, DEFAULT_MAPBOX_STYLE, getMapboxStyleUrl } from "./MapboxStyles";
 import { PROVIDER_ICON } from "./provider-icon";
 import "mapbox-gl/dist/mapbox-gl.css";
-import "places-maplibre-base/styles.css";
+import "places-shared/maplibre-styles.css";
 
 const DEFAULT_SETTINGS: IPlaceExtensionSettings = {
   defaultStyle: DEFAULT_MAPBOX_STYLE
@@ -35,7 +35,7 @@ export default class MapboxPlacePluginExtension extends Plugin implements IPlace
     this.settings = extensionSettings;
 
     if (!extensionSettings.apiKey) {
-      return settingsOnlyExports(this.settingsGroup());
+      return settingsOnlyExports(this.settingsGroup(extensionSettings));
     }
 
     this.mapBlockProcessor = new MapboxMapBlockProcessor(app, extensionSettings, mainSettings.units, mainSettings.developerMode);
@@ -68,13 +68,15 @@ export default class MapboxPlacePluginExtension extends Plugin implements IPlace
           terrain: new MapboxTerrainDemProvider(extensionSettings)
         }
       ],
-      settingsGroup: this.settingsGroup()
+      settingsGroup: this.settingsGroup(extensionSettings)
     };
   }
 
-  private settingsGroup(): ExtensionSettingsGroup {
+  private settingsGroup(settings: IPlaceExtensionSettings): ExtensionSettingsGroup {
     return {
       heading: "Mapbox",
+      ...settingsPageStatus(() => Boolean(settings.apiKey?.trim())),
+      reloadOn: ["apiKey", "defaultStyle"],
       items: [
         apiKeySettingItem("Mapbox"),
         countrySettingItem("Country to limit searches to (optional)"),
@@ -92,5 +94,4 @@ export default class MapboxPlacePluginExtension extends Plugin implements IPlace
       this.mapBlockProcessor.cleanup();
     }
   }
-
 }

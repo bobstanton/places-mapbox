@@ -1,5 +1,6 @@
 import { runPluginBuild, obsidianPluginExternal } from "./esbuild.shared.mjs";
+import { mapboxWorkerRegistryPlugin } from "./esbuild.mapbox-worker-registry.mjs";
 
 // The MapLibre base's default engine is loaded lazily; this bundle injects
 // mapbox-gl instead, so maplibre-gl must never be pulled in.
-await runPluginBuild({ external: [...obsidianPluginExternal, "maplibre-gl"] });
+await runPluginBuild({ external: [...obsidianPluginExternal, "maplibre-gl"], plugins: [mapboxWorkerRegistryPlugin] });
